@@ -3,12 +3,12 @@
 ShinglingClusterGen::ShinglingClusterGen(int shingling_iters, int cc_iters, 
 						std::string output_prefix, std::string cc_alg, int proc_me, int log_scale, int log_proc,
 						int prime_num, int num_hash, int shingle_size, int kmer_len, char* random_filename, 
-						int max_hash, bool use_persistent_hashing) :
+						bool fixed_randoms, int max_hash, bool use_persistent_hashing) :
 						shingling_iterations(shingling_iters),
                                                 connected_component_iterations(cc_iters), connected_component_algorithm(cc_alg),
 						shingling_params(ShinglingToolbox(prime_num, num_hash, 
 											shingle_size, kmer_len, random_filename, 
-											max_hash, use_persistent_hashing)) {
+											max_hash, use_persistent_hashing, fixed_randoms)) {
 	//std::cout << "first constructor called" << std::endl;
 	
 	me = me;
@@ -29,12 +29,12 @@ ShinglingClusterGen::ShinglingClusterGen(int shingling_iters, int cc_iters,
 
 ShinglingClusterGen::ShinglingClusterGen(int shingling_iters, int cc_iters, 
 						std::string output_prefix, std::string cc_alg, int prime_num, int num_hash, 
-						int shingle_size, int kmer_len, char* random_filename, int max_hash, 
+						int shingle_size, int kmer_len, char* random_filename, bool fixed_randoms, int max_hash, 
 						bool use_persistent_hashing) : shingling_iterations(shingling_iters),
 						connected_component_iterations(cc_iters), connected_component_algorithm(cc_alg),
 						shingling_params(ShinglingToolbox(prime_num, num_hash,
                                                                                         shingle_size, kmer_len, random_filename,
-                                                                                        max_hash, use_persistent_hashing)) {
+                                                                                        max_hash, use_persistent_hashing, fixed_randoms)) {
 	//std::cout << "second constructor called" << std::endl;
 	//ShinglingToolbox shingling_params(prime_num, num_hash, shingle_size, kmer_len, random_filename, max_hash, use_persistent_hashing);
 	output_filename = set_output_filename(&shingling_params, output_prefix, shingling_iters, cc_iters);
@@ -372,7 +372,7 @@ void ShinglingClusterGen::mrmpi_cluster(MapReduce* mr, std::string input_fname, 
 		*connected_comp_time = tend - tstart;
 	}
 	//mr -> print("interfiles_finalized_redun_removed", 0, -1, 1, 5, 5);
-	if (output_filename != "") {
+/*	if (output_filename != "") {
 		char output_name[output_filename.length() + 1];
 		strcpy(output_name, output_filename.c_str());
 		remove(output_name);
@@ -386,7 +386,7 @@ void ShinglingClusterGen::mrmpi_cluster(MapReduce* mr, std::string input_fname, 
 		if (log_scale > 1 && (log_proc == me || log_proc == -1)) std::cerr << " output printed" << std::endl;
 		//exit(0);
 	}
-	if (log_scale > 1 && (log_proc == me || log_proc == -1)) std::cerr << "clusters computed." << std::endl;
+*/	if (log_scale > 1 && (log_proc == me || log_proc == -1)) std::cerr << "clusters computed." << std::endl;
 }
 
 std::string ShinglingClusterGen::set_output_filename(ShinglingToolbox* params, std::string prefix, int shingling_iters, int cc_iters) {

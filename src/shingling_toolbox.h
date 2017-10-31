@@ -3,6 +3,8 @@
 #include <unordered_set>
 #include <vector>
 #include <fstream>
+#include <stdlib.h>
+#include <time.h>
 
 class ShinglingToolbox {
 public:
@@ -23,7 +25,7 @@ public:
 	std::unordered_map<std::string, unsigned long long> vertex_hash;
 	ShinglingToolbox() : hash_randoms(NULL), num_hash(0) { }
 	ShinglingToolbox(int prime_num, int num_hash, int shingle_size, int kmer_len, char* random_filename, int max_hash, 
-				bool use_persistent_hashing = true);
+				bool use_persistent_hashing = true, bool fixed_randoms = false);
 	~ShinglingToolbox();
 	void set_hash_randoms(int* rand_array, int max_hash, char* filename);
 };

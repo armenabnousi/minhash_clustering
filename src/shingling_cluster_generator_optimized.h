@@ -87,10 +87,10 @@ public:
 	ShinglingClusterGen(int shingling_iters, int cc_iters, 
 						std::string output_prefix, std::string cc_alg, int proc_me, int log_scale, int log_proc,
 						int prime_num, int num_hash, int shingle_size, int kmer_len, char* random_filename, 
-						int max_hash, bool use_persistent_hashing);
+						bool fixed_randoms, int max_hash, bool use_persistent_hashing);
 	ShinglingClusterGen(int shingling_iters, int cc_iters, 
 						std::string output_prefix, std::string cc_alg, int prime_num, int num_hash, 
-						int shingle_size, int kmer_len, char* random_filename, int max_hash, 
+						int shingle_size, int kmer_len, char* random_filename, bool fixed_randoms, int max_hash, 
 						bool use_persistent_hashing);
 	ShinglingClusterGen() { }
 	~ShinglingClusterGen();

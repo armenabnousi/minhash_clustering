@@ -1,11 +1,18 @@
 #include "shingling_toolbox.h"
 
 ShinglingToolbox::ShinglingToolbox(int prime_num, int num_hash, int shingle_size, int kmer_len, char* random_filename, int max_hash, 
-		bool use_persistent_hashing) :
+		bool use_persistent_hashing, bool fixed_randoms) :
 		Prime_num(prime_num), num_hash(num_hash), shingle_size(shingle_size), kmer_len(kmer_len), 
 		max_hash(max_hash), use_persistent_hashing(use_persistent_hashing) {
 	hash_randoms = new int[max_hash * 2];
-	set_hash_randoms(hash_randoms, max_hash, random_filename);
+	if (fixed_randoms) {
+		set_hash_randoms(hash_randoms, max_hash, random_filename);
+	} else {
+		srand(time(NULL));
+		for (int i = 0; i < max_hash * 2; ++i) {
+			hash_randoms[i] = rand();	
+		}
+	} 
 }
 
 ShinglingToolbox::~ShinglingToolbox() {
