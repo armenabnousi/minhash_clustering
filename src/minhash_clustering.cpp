@@ -74,12 +74,12 @@ int main(int narg, char **args)
 	int num_processors = 0;
 	MPI_Comm_size(MPI_COMM_WORLD, &num_processors);
 	
-	int nmap = num_processors, pagesize = 4096, sepdelta = 0, seq_count = 0, kmer_len = 6, shingle_size = 2;
+	int nmap = num_processors, pagesize = 4096, sepdelta = 30000, seq_count = 0, kmer_len = 6, shingle_size = 2;
 	int shingling_iterations = 2,  min_cluster_limit = 10, max_num_hash = 2000;
 	bool rename = false, collect_in_root = false, fixed_randoms = false;
 	std::string input_fname = "", output_prefix = "",  connected_component_algorithm = "nocc", community_detection_method = "usc_louvain";
 	std::string metis_prefix, fvalue_filename, grappolo_command, grappolo_script;
-	int start_hash_num = 2, hash_difference = 1;
+	int start_hash_num = 41, hash_difference = 40;
 	double fvalue_threshold = 0.9;
 	parse_input_args(args, &nmap, &pagesize, &sepdelta, &input_fname, &seq_count, &kmer_len, &shingle_size, 
 				&max_num_hash, &shingling_iterations, &min_cluster_limit, &start_hash_num, &metis_prefix, 
@@ -255,7 +255,7 @@ int main(int narg, char **args)
 				std::cout << "\nwait time: " << wait_time << std::endl;
 			}
 			MPI_Barrier(MPI_COMM_WORLD);
-		}
+		} 
 		//////////////////////////////////////////
 		if (me == 0) std::cout << "iteration completed...\tfvalue = " << fvalue << "\n******************\n" << std::endl;
 	}
