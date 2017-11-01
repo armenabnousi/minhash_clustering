@@ -15,14 +15,11 @@ CONTENTS:
 
 1. INSTALLATION:
 
-Use make to generate the executable files: Go to the main directory minhash_clustering/ and run make. We have 
-used gcc-6.2.0 and openmpi-1.10.1 to build our binaries.
+Use make to generate the executable files: Go to the main directory minhash_clustering/ and run make. We have used gcc-6.2.0 and openmpi-1.10.1 to build our binaries.
 This will generate three executable filesand place them in the bin/ directory. This is an explanation of the executable files:
 - bin/minhash_clustering: This is the implementation of the similarity graph construction algorithm. 
-	It receives as input a fasta file containing protein conserved regions and writes the generated similarity graph 
-	in Metis format to a file.
-- bin/graph_formatter: This is used to convert the output of the Grappolo method to a format that resembles the print 
-	statement of the MRMPI library.
+	It receives as input a fasta file containing protein conserved regions and writes the generated similarity graph in Metis format to a file.
+- bin/graph_formatter: This is used to convert the output of the Grappolo method to a format that resembles the print statement of the MRMPI library.
 - bin/fvalue_evaluator: This receives two input clusterings and computes the f-score between these two.
 
 There are two other .sh scripts in the bin/ directory. These are the scripts used to submit a parallel job to our PBS cluster. 
@@ -32,12 +29,7 @@ You might need to change the header of these files depending on the configuratio
 
 2.USAGE:
 
-You will need to submit one of the scripts (script.sh) to your cluster queue to run minhash_clustering. If in the options for 
-minhash_clustering you specify that you want to run Grappolo in each iteration and compute the fvalue (run the complete pipeline), the
-program will automatically submit a new job (cluster_script.sh) in each iteration and use the output of that inner job. You should modify 
-the headers of the job submission scripts according to your cluster. If you decide that you only want to run the similarity graph 
-construction, modifying the script.sh headers and setting the correct option (-u 0) will execute the graph construction iterations without
-clustering.
+You will need to submit one of the scripts (script.sh) to your cluster queue to run minhash_clustering. If in the options for minhash_clustering you specify that you want to run Grappolo in each iteration and compute the fvalue (run the complete pipeline), the program will automatically submit a new job (cluster_script.sh) in each iteration and use the output of that inner job. You should modify the headers of the job submission scripts according to your cluster. If you decide that you only want to run the similarity graph construction, modifying the script.sh headers and setting the correct option (-u 0) will execute the graph construction iterations without clustering.
 
 To run minhash_clustering you will need to use the following command:
 $minhash_clustering [options]
@@ -64,58 +56,35 @@ where options are:
 -q separation_delta 
 
 more details about the options:
--f input_fasta_filename: name (including path) of the fasta file containing conserved regions. The sequences should be named 
-	using (number)_(number) format (e.g: >254_2) where the first number is the id for a sequence and the second number is 
-	the id for the conserved region within that sequence
+-f input_fasta_filename: name (including path) of the fasta file containing conserved regions. The sequences should be named using (number)_(number) format (e.g: >254_2) where the first number is the id for a sequence and the second number is the id for the conserved region within that sequence
 -n sequence_count: number of conserved regions in the fasta file
 -k kmer_length: length of the substrings from conserved regions that are used in the MinHashing algorithm (default = 6)
--s sketch_size: number of minimum hashvalues that are used to generate a sketch for a document. Equivalent to 'c' in <k,c>-sketch, 
-	mentioned in the paper. (default = 2)
--e max_number_of_hashes: maximum number of hash functions that will be used in the algorithm. Equivalent to the maximum allowed 
-	iterations of the algorithm. (default = 2000)
--r number_of_shingling_iterations: number of times that shingling should be performed in each iteration. Similar to the supersketches 
-	used in general MinHashing algorithm but with a little modification. Please see the paper for details. (default = 2)
+-s sketch_size: number of minimum hashvalues that are used to generate a sketch for a document. Equivalent to 'c' in <k,c>-sketch, mentioned in the paper. (default = 2)
+-e max_number_of_hashes: maximum number of hash functions that will be used in the algorithm. Equivalent to the maximum allowed iterations of the algorithm. (default = 2000)
+-r number_of_shingling_iterations: number of times that shingling should be performed in each iteration. Similar to the supersketches used in general MinHashing algorithm but with a little modification. Please see the paper for details. (default = 2)
 -l min_cluster_size_allowed: minimum number of sequences that can be in a cluster, otherwise the cluster is rejected. (default = 10)
 -h starting_number_of_hashes: number of hash functions that should be used in the first iteration. (default = 41)
--o metis_filename_prefix: path and an optional prefix for where the generated similarity graph should be stored. The algorithm
-	concatenates this name with the number of hash functions used and the kmer length to generate iteration-specific file. 
--v temporary_fscore_filename: since the complete pipeline depends on the fvalue that is computed in another executable program, the 
-	resulting f-score is written to this temporary file and in each iteration this file is deleted and regenerated again with
-	a new value. Please note that if you are not running Grappolo (option -u), this option will not be used.
--t fscore_threshold: the algorithm stops when either it has reached the maximum allowed hash functions (-e option) or when the 
-	f-score between the two clusterings in the final iteration is greater than a threshold value. This threshold value should be
-	specified by -t option. (default = 0.9)
--d hash_difference: the difference between the number of hash functions that are used to generate two clustering in each iteration. 
-	(default = 40)
+-o metis_filename_prefix: path and an optional prefix for where the generated similarity graph should be stored. The algorithm concatenates this name with the number of hash functions used and the kmer length to generate iteration-specific file. 
+-v temporary_fscore_filename: since the complete pipeline depends on the fvalue that is computed in another executable program, the resulting f-score is written to this temporary file and in each iteration this file is deleted and regenerated again with a new value. Please note that if you are not running Grappolo (option -u), this option will not be used.
+-t fscore_threshold: the algorithm stops when either it has reached the maximum allowed hash functions (-e option) or when the f-score between the two clusterings in the final iteration is greater than a threshold value. This threshold value should be specified by -t option. (default = 0.9)
+-d hash_difference: the difference between the number of hash functions that are used to generate two clustering in each iteration. (default = 40)
 
 The following two commands are required only if you have set -u option to a non-zero value.
--g grappolo_job_submission_command: this is the command that should be used to submit a job to the cluster (in PBS clusters it is qsub).
-	This is used when you specify that you would like to run Grappolo in each iteration. The code will use this job submission 
-	command to automatically submit a new job to the cluster in each iteration.
--c grappolo_job_script: This is the filename for the script that is used to call Grappolo and computation of the f-score. We have 
-	included cluster_script.sh file in the bin/ directory. However you will need to modify the header is required by your cluster.
-	In the script.sh file under the -c option you will need to specify the path to the modified cluster_script.sh file 
-	(including filename). This is required if you decide to run Grappolo in each iteration by setting the -u option.
+-g grappolo_job_submission_command: this is the command that should be used to submit a job to the cluster (in PBS clusters it is qsub). This is used when you specify that you would like to run Grappolo in each iteration. The code will use this job submission command to automatically submit a new job to the cluster in each iteration.
+-c grappolo_job_script: This is the filename for the script that is used to call Grappolo and computation of the f-score. We have included cluster_script.sh file in the bin/ directory. However you will need to modify the header is required by your cluster. In the script.sh file under the -c option you will need to specify the path to the modified cluster_script.sh file (including filename). This is required if you decide to run Grappolo in each iteration by setting the -u option.
 
--u run_grappolo: by giving a non-zero argument to this option, you will specify to run Grappolo and f-score computation modules after 
-	generation of the similarity graphs. If this option is set you will have to set the -g and -c options as well. (default  = false)
--x use_fixed_randoms: This is used for reproducibility. Since the algorithm depends on random numbers. A file containing 4000 random 
-	integers (for 2000 iterations) is generated and stored in the data/ directory. By setting this option to a non-zero argument, 
-	the program will use these pre-generated random integers in the hash functions; otherwise it will use rand() function to generate
-	random numbers required for the hash functions. Please note that you can overwrite the file containing the pre-generated random
-	numbers, but based on the number of the integers in that file, you will need to set the -e option (max number of hashes)
-	(default = false)
+-u run_grappolo: by giving a non-zero argument to this option, you will specify to run Grappolo and f-score computation modules after generation of the similarity graphs. If this option is set you will have to set the -g and -c options as well. (default  = false)
+-x use_fixed_randoms: This is used for reproducibility. Since the algorithm depends on random numbers. A file containing 4000 random integers (for 2000 iterations) is generated and stored in the data/ directory. By setting this option to a non-zero argument, the program will use these pre-generated random integers in the hash functions; otherwise it will use rand() function to generate random numbers required for the hash functions. Please note that you can overwrite the file containing the pre-generated random numbers, but based on the number of the integers in that file, you will need to set the -e option (max number of hashes) (default = false)
 -m number_of_maps: see the documentation for MRMPI library (default = number of processors used)
 -p page_size: see the documentation for MRMPI library (default = 4096)
--q separation_delta: Please note that this value cannot be smaller than the length of the longest conserved region in your input file.
-	See the documentation for MRMPI library for more details. (default = 30000)
+-q separation_delta: Please note that this value cannot be smaller than the length of the longest conserved region in your input file. See the documentation for MRMPI library for more details. (default = 30000)
 
-#####################################################################################################
+##################################################################################################
 
 3. MODIFYING THE JOB SUBMISSION SCRIPTS:
 
 
 
-#####################################################################################################
+##################################################################################################
 If you use this software please cite: ...
 Please direct further questions to: aabnousi@eecs.wsu.edu
